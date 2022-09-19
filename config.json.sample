@@ -1,0 +1,6 @@
+{
+  "token": "1234567890:ABCDEFGHIJKLMOPQRSTUVWXYZ0123456789",
+  "interval_seconds": 1,
+  "allowed_telegram_usernames": ["allowed_telegram_username1", "allowed_telegram_username2", "allowed_telegram_username999"],
+  "is_verbose": false
+}
