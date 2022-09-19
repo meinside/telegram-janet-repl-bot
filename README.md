@@ -1,6 +1,8 @@
 # telegram-janet-repl-bot
 
-A Telegram Bot which works as a Janet REPL bot.
+A Telegram Bot which works as a Janet REPL.
+
+<img width="575" alt="screenshot" src="https://user-images.githubusercontent.com/185988/190987210-d25ebbe0-c116-447b-8ade-49585f173e2e.png">
 
 ## How to configure
 
