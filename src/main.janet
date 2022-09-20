@@ -46,9 +46,15 @@
   ``
   [token interval-seconds allowed-telegram-usernames verbose?]
 
+  # bot
   (var bot (tg/new-bot token
                        :interval-seconds interval-seconds
                        :verbose? verbose?))
+  (setdyn :bot bot) # for using in overridden functions
+
+  # active chat ids
+  (var chats @{})
+  (setdyn :chats chats) # for using in overridden functions
 
   # print bot information
   (if-let [me (:get-me bot)
@@ -70,18 +76,22 @@
                ``)
   # override `print` and `printf` functions to return string, not to print to stdio
   (eval-string ``(defn- print
-                   "Returns given parameters as a string. (Overrided for this bot.)"
+                   "Sends given parameters to each chat as a string. (Overridden for this bot.)"
                    [& xs]
                    (var buf @"")
                    (xprint buf ;xs)
-                   buf)
+                   (loop [(chat-id _) :in (pairs (dyn :chats))]
+                     (:send-message (dyn :bot) chat-id buf))
+                   nil)
                ``)
   (eval-string ``(defn- printf
-                   "Returns a formatted string with given parameters. (Overrided for this bot.)"
+                   "Sends a formatted string with given parameters to each chat. (Overridden for this bot.)"
                    [fmt & xs]
                    (var buf @"")
                    (xprintf buf fmt ;xs)
-                   buf)
+                   (loop [(chat-id _) :in (pairs (dyn :chats))]
+                     (:send-message (dyn :bot) chat-id buf))
+                   nil)
                ``)
 
   # delete webhook before polling updates
@@ -110,6 +120,9 @@
                               (ev/spawn-thread
                                 (:send-chat-action bot chat-id :typing))
 
+                              # save active chat id
+                              (put chats chat-id true)
+
                               # evaluate and send response
                               (try
                                 (do
@@ -123,6 +136,10 @@
                                            (if-not (response :ok)
                                              (print (string/format "failed to send error message: %m" response)))))))))))
                     (do
+                      # remove chat id
+                      (if-let [chat-id (get-in update [:message :chat :id])]
+                        (put chats chat-id nil))
+
                       (print (string/format "telegram username: %s not allowed" username))))))))
           # or break when fetching fails
           (do

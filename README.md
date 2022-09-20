@@ -2,7 +2,9 @@
 
 A Telegram Bot which works as a Janet REPL.
 
-<img width="575" alt="screenshot" src="https://user-images.githubusercontent.com/185988/190987210-d25ebbe0-c116-447b-8ade-49585f173e2e.png">
+<img width="569" alt="screenshot" src="https://user-images.githubusercontent.com/185988/191209382-d77e0ff3-db08-4b7d-bad4-0fa1952da03e.png">
+
+It will evaluate your messages and send the results back as replies.
 
 ## How to configure
 
@@ -94,9 +96,8 @@ $ sudo systemctl stop telegram-janet-repl-bot
 
 Following functions/macros are overridden for use in Telegram:
 
-- `doc`
-- `print`
-- `printf`
+- `doc`: will reply with the resulting document.
+- `print`, `printf`: will send results to each chat, instead of stdout.
 
 ## Warning
 
