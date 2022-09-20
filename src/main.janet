@@ -60,7 +60,7 @@
       (print "cannot get bot information, exiting...")
       (os/exit 1)))
 
-  # override functions
+  # overridden functions
   #
   # override `doc` function to return string (original one returns nil)
   (eval-string ``(defn- doc

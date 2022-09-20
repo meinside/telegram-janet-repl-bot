@@ -92,7 +92,7 @@ $ sudo systemctl stop telegram-janet-repl-bot
 
 ## Note
 
-Following functions/macros are overrided for use in Telegram:
+Following functions/macros are overridden for use in Telegram:
 
 - `doc`
 - `print`
