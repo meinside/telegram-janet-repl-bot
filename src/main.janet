@@ -1,3 +1,8 @@
+# src/main.janet
+#
+# created on : 2022.09.19.
+# last update: 2022.09.20.
+
 (import telegram-bot-janet :as tg)
 (import spork/json)
 
@@ -62,6 +67,21 @@
                    "Returns the docstring of given symbol as a string. (Overrided for this bot.)"
                    [sym]
                    (get (dyn sym) :doc))
+               ``)
+  # override `print` and `printf` functions to return string, not to print to stdio
+  (eval-string ``(defn- print
+                   "Returns given parameters as a string. (Overrided for this bot.)"
+                   [& xs]
+                   (var buf @"")
+                   (xprint buf ;xs)
+                   buf)
+               ``)
+  (eval-string ``(defn- printf
+                   "Returns a formatted string with given parameters. (Overrided for this bot.)"
+                   [fmt & xs]
+                   (var buf @"")
+                   (xprintf buf fmt ;xs)
+                   buf)
                ``)
 
   # delete webhook before polling updates

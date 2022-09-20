@@ -92,6 +92,14 @@ $ sudo systemctl stop telegram-janet-repl-bot
 
 ## Note
 
+Following functions/macros are overrided for use in Telegram:
+
+- `doc`
+- `print`
+- `printf`
+
+## Warning
+
 This bot accepts messages only from allowed telegram usernames,
 
 but is not free from bad messages, (eg. infinite loops, malicious shell commands, etc.)
