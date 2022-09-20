@@ -64,6 +64,9 @@ WorkingDirectory=/dir/to/telegram-janet-repl-bot
 ExecStart=/path/to/build/repl-bot /path/to/config.json
 Restart=always
 RestartSec=5
+ProtectHome=read-only
+ProtectSystem=strict
+PrivateTmp=yes
 MemoryLimit=100M
 
 #StandardOutput=file:/home/ubuntu/tmp/output.log
@@ -86,4 +89,12 @@ $ sudo systemctl start telegram-janet-repl-bot
 $ sudo systemctl restart telegram-janet-repl-bot
 $ sudo systemctl stop telegram-janet-repl-bot
 ```
+
+## Note
+
+This bot accepts messages only from allowed telegram usernames,
+
+but is not free from bad messages, (eg. infinite loops, malicious shell commands, etc.)
+
+so be careful not to blow up your servers :-)
 
