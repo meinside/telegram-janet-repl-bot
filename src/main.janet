@@ -6,7 +6,13 @@
 (import telegram-bot-janet :as tg)
 (import spork/json)
 
-# Edited `eval-string` example from: https://janetdocs.com/run-context
+# constants
+(def- command-help "/help")
+(def- description-help ``Print a help message of this bot.``)
+(def- commands [{:command command-help
+                 :description description-help}])
+
+# edited `eval-string` example from: https://janetdocs.com/run-context
 (defn- eval-str
   ``Evaluates given string, and returns the result as string.
   ``
@@ -40,6 +46,17 @@
     # else
     (string/replace-all "\\n" "\n"
                         (string/format "%m" returnval))))
+
+(defn- help-message
+  ``Returns the help message of this bot.
+  ``
+  []
+  ``This bot replies to your messages with strings evaluated by Janet language.
+
+  Some functions were overridden for using in Telegram.
+
+  https://github.com/meinside/telegram-janet-repl-bot
+  ``)
 
 (defn- run-bot
   ``Runs bot with given parameters.
@@ -100,6 +117,9 @@
                    nil)
                ``)
 
+  # set bot commands
+  (:set-my-commands bot commands)
+
   # delete webhook before polling updates
   (:delete-webhook bot)
 
@@ -119,8 +139,8 @@
                         (if-let [chat-id (get-in update [:message :chat :id])
                                  text (get-in update [:message :text])
                                  original-message-id (get-in update [:message :message-id])]
-                          # skip telegram commands
                           (if-not (string/has-prefix? "/" text)
+                            # handle non-command messages
                             (do
                               # 'typing...'
                               (ev/spawn-thread
@@ -140,7 +160,14 @@
                                          (let [err (string err)
                                                response (:send-message bot chat-id err :reply-to-message-id original-message-id)]
                                            (if-not (response :ok)
-                                             (print (string/format "failed to send error message: %m" response)))))))))))
+                                             (print (string/format "failed to send error message: %m" response))))))))
+                            # handle telegram commands
+                            (do
+                              (cond
+                                (= text command-help) (do
+                                                        (:send-message bot chat-id (help-message)))
+                                (do
+                                  (:send-message bot chat-id (string/format "no such command: %s" text) :reply-to-message-id original-message-id)))))))
                     (do
                       # remove chat id
                       (if-let [chat-id (get-in update [:message :chat :id])]
