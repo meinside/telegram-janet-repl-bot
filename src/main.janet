@@ -1,7 +1,7 @@
 # src/main.janet
 #
 # created on : 2022.09.19.
-# last update: 2022.09.20.
+# last update: 2022.09.21.
 
 (import telegram-bot-janet :as tg)
 (import spork/json)
@@ -80,8 +80,11 @@
                    [& xs]
                    (var buf @"")
                    (xprint buf ;xs)
-                   (loop [(chat-id _) :in (pairs (dyn :chats))]
-                     (:send-message (dyn :bot) chat-id buf))
+                   (if-let [bot (dyn :bot)
+                            chats (dyn :chats)]
+                     (ev/spawn-thread
+                       (loop [(chat-id _) :in (pairs chats)]
+                         (:send-message bot chat-id buf))))
                    nil)
                ``)
   (eval-string ``(defn- printf
@@ -89,8 +92,11 @@
                    [fmt & xs]
                    (var buf @"")
                    (xprintf buf fmt ;xs)
-                   (loop [(chat-id _) :in (pairs (dyn :chats))]
-                     (:send-message (dyn :bot) chat-id buf))
+                   (if-let [bot (dyn :bot)
+                            chats (dyn :chats)]
+                     (ev/spawn-thread
+                       (loop [(chat-id _) :in (pairs chats)]
+                         (:send-message bot chat-id buf))))
                    nil)
                ``)
 

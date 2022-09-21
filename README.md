@@ -60,19 +60,14 @@ After=network.target
 
 [Service]
 Type=simple
-User=ubuntu
-Group=ubuntu
 WorkingDirectory=/dir/to/telegram-janet-repl-bot
-ExecStart=/path/to/build/repl-bot /path/to/config.json
+ExecStart=/path/to/telegram-janet-repl-bot/build/repl-bot /path/to/telegram-janet-repl-bot/config.json
 Restart=always
 RestartSec=5
-ProtectHome=read-only
-ProtectSystem=strict
-PrivateTmp=yes
+DynamicUser=yes
+ReadOnlyPaths=/
 MemoryLimit=100M
-
-#StandardOutput=file:/home/ubuntu/tmp/output.log
-#StandardError=file:/home/ubuntu/tmp/error.log
+NoExecPaths=/bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin
 
 [Install]
 WantedBy=multi-user.target
