@@ -1,7 +1,7 @@
 # src/main.janet
 #
 # created on : 2022.09.19.
-# last update: 2022.09.21.
+# last update: 2022.11.10.
 
 (import telegram-bot-janet :as tg)
 (import spork/json)
@@ -38,10 +38,13 @@
                              (set returnval val))
                 :source :eval-str})
 
+  #(pp returnval)
+
   (cond
     (nil? returnval) "nil"
     (function? returnval) (string returnval)
     (number? returnval) (string returnval)
+    (boolean? returnval) (string returnval)
     (empty? returnval) "<empty>"
     # else
     (string/replace-all "\\n" "\n"
