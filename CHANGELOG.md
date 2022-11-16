@@ -1,5 +1,8 @@
 # Changelog
 
+## [0.0.7] - 2022-11-16
+- Fixed overridden macro `doc` to not quote its parameter.
+
 ## [0.0.6] - 2022-11-10
 - Fixed a bug with boolean results.
 
@@ -22,6 +25,7 @@
 ## [0.0.0] - 2022-09-19
 - Created this project.
 
+[0.0.7]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.3...v0.0.4
