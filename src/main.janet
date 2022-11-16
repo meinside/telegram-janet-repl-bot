@@ -1,7 +1,7 @@
 # src/main.janet
 #
 # created on : 2022.09.19.
-# last update: 2022.11.10.
+# last update: 2022.11.16.
 
 (import telegram-bot-janet :as tg)
 (import spork/json)
@@ -88,11 +88,11 @@
 
   # overridden functions
   #
-  # override `doc` function to return string (original one returns nil)
-  (eval-string ``(defn- doc
-                   "Returns the docstring of given symbol as a string. (Overrided for this bot.)"
+  # override `doc` macro to return string (original one returns nil)
+  (eval-string ``(defmacro- doc
+                   "Returns the docstring of given symbol as a string. (Overridden for this bot.)"
                    [sym]
-                   (get (dyn sym) :doc))
+                   ~(get (dyn ',sym) :doc))
                ``)
   # override `print` and `printf` functions to return string, not to print to stdio
   (eval-string ``(defn- print
@@ -132,51 +132,50 @@
       (forever
         (if-let [updates (ev/take updates-ch)]
           # fetch updates from updates channel,
-          (do
-            (if-not (empty? updates)
-              (loop [update :in updates]
-                (let [username (get-in update [:message :from :username])
-                      allowed? (index-of username allowed-telegram-usernames)]
-                  (if allowed?
-                    (do
-                        (if-let [chat-id (get-in update [:message :chat :id])
-                                 text (get-in update [:message :text])
-                                 original-message-id (get-in update [:message :message-id])]
-                          (if-not (string/has-prefix? "/" text)
-                            # handle non-command messages
-                            (do
-                              # 'typing...'
-                              (ev/spawn-thread
-                                (:send-chat-action bot chat-id :typing))
+          (if-not (empty? updates)
+            (loop [update :in updates]
+              (let [username (get-in update [:message :from :username])
+                    allowed? (index-of username allowed-telegram-usernames)]
+                (if allowed?
+                  (do
+                      (if-let [chat-id (get-in update [:message :chat :id])
+                               text (get-in update [:message :text])
+                               original-message-id (get-in update [:message :message-id])]
+                        (if-not (string/has-prefix? "/" text)
+                          # handle non-command messages
+                          (do
+                            # 'typing...'
+                            (ev/spawn-thread
+                              (:send-chat-action bot chat-id :typing))
 
-                              # save active chat id
-                              (put chats chat-id true)
+                            # save active chat id
+                            (put chats chat-id true)
 
-                              # evaluate and send response
-                              (try
-                                (do
-                                  (let [evaluated (eval-str text)
-                                        response (:send-message bot chat-id evaluated :reply-to-message-id original-message-id)]
-                                    (if-not (response :ok)
-                                      (print (string/format "failed to send evaluated string: %m" response)))))
-                                ([err] (do
-                                         (let [err (string err)
-                                               response (:send-message bot chat-id err :reply-to-message-id original-message-id)]
-                                           (if-not (response :ok)
-                                             (print (string/format "failed to send error message: %m" response))))))))
-                            # handle telegram commands
-                            (do
-                              (cond
-                                (= text command-help) (do
-                                                        (:send-message bot chat-id (help-message)))
-                                (do
-                                  (:send-message bot chat-id (string/format "no such command: %s" text) :reply-to-message-id original-message-id)))))))
-                    (do
-                      # remove chat id
-                      (if-let [chat-id (get-in update [:message :chat :id])]
-                        (put chats chat-id nil))
+                            # evaluate and send response
+                            (try
+                              (do
+                                (let [evaluated (eval-str text)
+                                      response (:send-message bot chat-id evaluated :reply-to-message-id original-message-id)]
+                                  (if-not (response :ok)
+                                    (print (string/format "failed to send evaluated string: %m" response)))))
+                              ([err] (do
+                                       (let [err (string err)
+                                             response (:send-message bot chat-id err :reply-to-message-id original-message-id)]
+                                         (if-not (response :ok)
+                                           (print (string/format "failed to send error message: %m" response))))))))
+                          # handle telegram commands
+                          (do
+                            (cond
+                              (= text command-help) (do
+                                                      (:send-message bot chat-id (help-message)))
+                              (do
+                                (:send-message bot chat-id (string/format "no such command: %s" text) :reply-to-message-id original-message-id)))))))
+                  (do
+                    # remove chat id
+                    (if-let [chat-id (get-in update [:message :chat :id])]
+                      (put chats chat-id nil))
 
-                      (print (string/format "telegram username: %s not allowed" username))))))))
+                    (print (string/format "telegram username: %s not allowed" username)))))))
           # or break when fetching fails
           (do
             (print "failed to take from updates channel")
