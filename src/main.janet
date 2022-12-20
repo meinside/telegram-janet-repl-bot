@@ -1,12 +1,13 @@
 # src/main.janet
 #
 # created on : 2022.09.19.
-# last update: 2022.11.16.
+# last update: 2022.12.20.
 
 (import telegram-bot-janet :as tg)
 (import spork/json)
 
 # constants
+(def- command-start "/start")
 (def- command-help "/help")
 (def- description-help ``Print a help message of this bot.``)
 (def- commands [{:command command-help
@@ -166,8 +167,12 @@
                           # handle telegram commands
                           (do
                             (cond
-                              (= text command-help) (do
-                                                      (:send-message bot chat-id (help-message)))
+                              (or (= text command-start)
+                                  (= text command-help))
+                              (do
+                                (:send-message bot chat-id (help-message)))
+
+                              # else
                               (do
                                 (:send-message bot chat-id (string/format "no such command: %s" text) :reply-to-message-id original-message-id)))))))
                   (do
