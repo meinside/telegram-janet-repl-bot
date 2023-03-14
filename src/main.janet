@@ -135,13 +135,15 @@
           # fetch updates from updates channel,
           (if-not (empty? updates)
             (loop [update :in updates]
-              (let [username (get-in update [:message :from :username])
+              (let [message (or (get-in update [:message])
+                                (get-in update [:edited-message]))
+                    username (get-in message [:from :username])
                     allowed? (index-of username allowed-telegram-usernames)]
                 (if allowed?
                   (do
-                      (if-let [chat-id (get-in update [:message :chat :id])
-                               text (get-in update [:message :text])
-                               original-message-id (get-in update [:message :message-id])]
+                      (if-let [chat-id (get-in message [:chat :id])
+                               text (get-in message [:text])
+                               original-message-id (get-in message [:message-id])]
                         (if-not (string/has-prefix? "/" text)
                           # handle non-command messages
                           (do
@@ -177,7 +179,7 @@
                                 (:send-message bot chat-id (string/format "no such command: %s" text) :reply-to-message-id original-message-id)))))))
                   (do
                     # remove chat id
-                    (if-let [chat-id (get-in update [:message :chat :id])]
+                    (if-let [chat-id (get-in message [:chat :id])]
                       (put chats chat-id nil))
 
                     (print (string/format "telegram username: %s not allowed" username)))))))
