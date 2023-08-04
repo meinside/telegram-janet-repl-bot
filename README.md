@@ -89,10 +89,8 @@ $ sudo systemctl stop telegram-janet-repl-bot
 
 ## Note
 
-Following functions/macros are overridden for use in Telegram:
-
-- `doc`: will reply with the resulting document.
-- `print`, `printf`: will send results to each chat, instead of stdout.
+- Functions/macros that print 'something' to stdout/stderr may return their ordinary results with the 'something' appended to them.
+- `doc` macro doesn't work as expected. Use `doc-of` function instead.
 
 ## Warning
 

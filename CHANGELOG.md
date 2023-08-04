@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.0] - 2023-08-04
+- Removed overridden functions.
+- Fixed to append stdout/stderr messages to the evaluated results.
+
+## [0.0.9] - 2023-03-14
+- Fixed to handle edited messages.
+
 ## [0.0.8] - 2022-12-20
 - Fixed to handle `/start` command.
 
@@ -28,6 +35,8 @@
 ## [0.0.0] - 2022-09-19
 - Created this project.
 
+[0.1.0]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.9...v0.1.0
+[0.0.9]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.8...v0.0.9
 [0.0.8]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.7...v0.0.8
 [0.0.7]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.6...v0.0.7
 [0.0.6]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.5...v0.0.6
