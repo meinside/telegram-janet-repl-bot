@@ -1,7 +1,7 @@
 # src/main.janet
 #
 # created on : 2022.09.19.
-# last update: 2023.08.04.
+# last update: 2023.08.31.
 
 (import telegram-bot-janet :as tg)
 (import spork/json)
@@ -58,8 +58,23 @@
               # else
               (string/replace-all "\\n" "\n"
                                   (string/format "%m" returnval)))
-        all (string/format "%s\n\n%s\n\n%s" ret stdout stderr)]
-    (string/trim all)))
+        # standard out,
+        out (if (empty? stdout)
+              nil
+              (string/trim stdout))
+
+        # standard error,
+        err (if (empty? stderr)
+              nil
+              (string/trim stderr))
+
+        # filter nil,
+        filtered (filter (fn [x] (not (nil? x))) [ret out err])
+
+        # and return the merged string
+        merged (string/join filtered "\n\n")]
+
+    merged))
 
 (defn- help-message
   ``Returns the help message of this bot.
@@ -124,14 +139,17 @@
                           (try
                             (do
                               (let [evaluated (eval-str text)
-                                    response (:send-message bot chat-id evaluated :reply-to-message-id original-message-id)]
+                                    response (:send-message bot chat-id evaluated
+                                                            :reply-to-message-id original-message-id)]
                                 (if-not (response :ok)
                                   (printf "failed to send evaluated string: %m" response))))
                             ([err] (do
                                      (let [err (string err)
-                                           response (:send-message bot chat-id err :reply-to-message-id original-message-id)]
+                                           response (:send-message bot chat-id err
+                                                                   :reply-to-message-id original-message-id)]
                                        (if-not (response :ok)
                                          (printf "failed to send error message: %m" response)))))))
+
                         # handle telegram commands
                         (do
                           (cond
@@ -142,7 +160,8 @@
 
                             # else
                             (do
-                              (:send-message bot chat-id (string/format "no such command: %s" text) :reply-to-message-id original-message-id)))))))
+                              (:send-message bot chat-id (string/format "No such command: %s" text)
+                                             :reply-to-message-id original-message-id)))))))
                   (do
                     (printf "telegram username: %s not allowed" username))))))
           # or break when fetching fails
@@ -153,7 +172,7 @@
   (print "stopping the bot..."))
 
 (defn- print-usage
-  ``Prints usage of this application.
+  ``Prints the usage of this application.
   ``
   [prog-name]
   (printf "Usage:\n\n$ %s [config-file-path]" prog-name))
