@@ -96,7 +96,7 @@ $ sudo systemctl stop telegram-janet-repl-bot
 
 This bot accepts messages only from allowed telegram usernames,
 
-but is not free from bad messages, (eg. infinite loops, malicious shell commands, etc.)
+but is not free from bad messages, (eg. intentional infinite loops, malicious shell commands, etc.)
 
 so be careful not to blow up your servers :-)
 
