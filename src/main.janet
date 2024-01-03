@@ -1,7 +1,7 @@
 # src/main.janet
 #
 # created on : 2022.09.19.
-# last update: 2023.08.31.
+# last update: 2024.01.03.
 
 (import telegram-bot-janet :as tg)
 (import spork/json)
@@ -140,13 +140,14 @@
                             (do
                               (let [evaluated (eval-str text)
                                     response (:send-message bot chat-id evaluated
-                                                            :reply-to-message-id original-message-id)]
+                                                            :reply-parameters {"message_id" original-message-id
+                                                                               "quote" text})]
                                 (if-not (response :ok)
                                   (printf "failed to send evaluated string: %m" response))))
                             ([err] (do
                                      (let [err (string err)
                                            response (:send-message bot chat-id err
-                                                                   :reply-to-message-id original-message-id)]
+                                                                   :reply-parameters {"message_id" original-message-id})]
                                        (if-not (response :ok)
                                          (printf "failed to send error message: %m" response)))))))
 
@@ -161,7 +162,7 @@
                             # else
                             (do
                               (:send-message bot chat-id (string/format "No such command: %s" text)
-                                             :reply-to-message-id original-message-id)))))))
+                                             :reply-parameters {"message_id" original-message-id})))))))
                   (do
                     (printf "telegram username: %s not allowed" username))))))
           # or break when fetching fails
