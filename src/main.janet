@@ -1,7 +1,7 @@
 # src/main.janet
 #
 # created on : 2022.09.19.
-# last update: 2024.01.03.
+# last update: 2024.01.11.
 
 (import telegram-bot-janet :as tg)
 (import spork/json)
@@ -12,6 +12,15 @@
 (def- description-help ``Print a help message of this bot.``)
 (def- commands [{:command command-help
                  :description description-help}])
+
+(defn- escape-html
+  ``Escapes '<', '>', and '&' from given string
+  ``
+  [str]
+  (string/replace-all "<" "&lt;"
+                      (string/replace-all ">" "&gt;"
+                                          (string/replace-all "&" "&amp;"
+                                                              (string/trim str)))))
 
 # edited `eval-string` example from: https://janetdocs.com/run-context
 (defn- eval-str
@@ -49,27 +58,32 @@
   #(pp stdout)
   #(pp stderr)
 
-  (let [ret (cond
-              (nil? returnval) "<nil>"
-              (function? returnval) (string returnval)
-              (number? returnval) (string returnval)
-              (boolean? returnval) (string returnval)
-              (empty? returnval) "<empty>"
-              # else
-              (string/replace-all "\\n" "\n"
-                                  (string/format "%m" returnval)))
+  (let [ret (string/format "<pre><code class=\"language-janet\">%s</code></pre>"
+                           (escape-html
+                             (cond
+                               (nil? returnval) "<nil>"
+                               (function? returnval) (string returnval)
+                               (number? returnval) (string returnval)
+                               (boolean? returnval) (string returnval)
+                               (empty? returnval) "<empty>"
+                               # else
+                               (string/replace-all "\\n" "\n"
+                                                   (string/format "%m" returnval)))))
         # standard out,
         out (if (empty? stdout)
               nil
-              (string/trim stdout))
+              (string/format "<blockquote>%s</blockquote>"
+                             (escape-html stdout)))
 
         # standard error,
         err (if (empty? stderr)
               nil
-              (string/trim stderr))
+              (string/format "<i>%s</i>"
+                             (escape-html stderr)))
 
         # filter nil,
-        filtered (filter (fn [x] (not (nil? x))) [ret out err])
+        filtered (filter (fn [x] (not (nil? x)))
+                         [ret out err])
 
         # and return the merged string
         merged (string/join filtered "\n\n")]
@@ -141,7 +155,9 @@
                               (let [evaluated (eval-str text)
                                     response (:send-message bot chat-id evaluated
                                                             :reply-parameters {"message_id" original-message-id
-                                                                               "quote" text})]
+                                                                               "quote" text}
+                                                            :parse-mode "HTML")]
+
                                 (if-not (response :ok)
                                   (printf "failed to send evaluated string: %m" response))))
                             ([err] (do
