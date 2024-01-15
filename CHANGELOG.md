@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4] - 2024-01-14
+- Fixed to set a reaction rather than sending typing action on a new message.
+- Refactored some codes.
+
+## [0.1.3] - 2024-01-11
+- Edited message format. (parse mode: HTML)
+
 ## [0.1.2] - 2024-01-03
 - Applied changes in dependencies.
 
@@ -41,6 +48,8 @@
 ## [0.0.0] - 2022-09-19
 - Created this project.
 
+[0.1.4]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.1.3...v0.1.4
+[0.1.3]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/meinside/telegram-janet-repl-bot/compare/v0.0.9...v0.1.0
