@@ -2,7 +2,7 @@
 
 A Telegram Bot which works as a Janet REPL.
 
-<img width="569" alt="screenshot" src="https://user-images.githubusercontent.com/185988/191209382-d77e0ff3-db08-4b7d-bad4-0fa1952da03e.png">
+<img width="588" alt="captured_20240115_1545" src="https://github.com/meinside/telegram-janet-repl-bot/assets/185988/ebbbe52a-01c0-487c-9e52-07345fb5caa5">
 
 It will evaluate your messages and send the results back as replies.
 
