@@ -1,7 +1,7 @@
 # src/main.janet
 #
 # created on : 2022.09.19.
-# last update: 2024.01.11.
+# last update: 2024.01.15.
 
 (import telegram-bot-janet :as tg)
 (import spork/json)
@@ -82,8 +82,7 @@
                              (escape-html stderr)))
 
         # filter nil,
-        filtered (filter (fn [x] (not (nil? x)))
-                         [ret out err])
+        filtered (filter identity [ret out err])
 
         # and return the merged string
         merged (string/join filtered "\n\n")]
@@ -145,9 +144,11 @@
                       (if-not (string/has-prefix? "/" text)
                         # handle non-command messages
                         (do
-                          # 'typing...'
                           (ev/spawn-thread
-                            (:send-chat-action bot chat-id :typing))
+                            # add reaction to the original message
+                            (:set-message-reaction bot chat-id original-message-id
+                                                   :reaction [{"type" "emoji"
+                                                               "emoji" "👌"}]))
 
                           # evaluate and send response
                           (try
