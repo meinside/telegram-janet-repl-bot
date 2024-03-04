@@ -47,7 +47,7 @@ $ build/repl-bot config.json
 Create a systemd service file:
 
 ```bash
-$ vi /lib/systemd/system/telegram-janet-repl-bot.service
+$ vi /etc/systemd/system/telegram-janet-repl-bot.service
 ```
 
 and fill it with:
