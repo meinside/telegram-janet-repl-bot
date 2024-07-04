@@ -1,16 +1,21 @@
 # src/main.janet
 #
 # created on : 2022.09.19.
-# last update: 2024.01.15.
+# last update: 2024.07.04.
 
 (import telegram-bot-janet :as tg)
 (import spork/json)
 
 # constants
+(def- github-page-url "https://github.com/meinside/telegram-janet-repl-bot")
 (def- command-start "/start")
 (def- command-help "/help")
+(def- command-privacy "/privacy")
 (def- description-help ``Print a help message of this bot.``)
-(def- commands [{:command command-help
+(def- description-privacy ``Print a privacy policy of this bot.``)
+(def- commands [{:command command-privacy
+                 :description description-privacy}
+                {:command command-help
                  :description description-help}])
 
 (defn- escape-html
@@ -93,10 +98,17 @@
   ``Returns the help message of this bot.
   ``
   []
-  ``This bot replies to your messages with strings evaluated by Janet language.
+  (string/format
+    "This bot replies to your messages with strings evaluated by Janet language.\n\n%s"
+    github-page-url))
 
-  https://github.com/meinside/telegram-janet-repl-bot
-  ``)
+(defn- privacy-message
+  ``Returns the privacy policy of this bot.
+  ``
+  []
+  (string/format
+    "Privacy Policy:\n\n%s/raw/master/PRIVACY.md"
+    github-page-url))
 
 (defn- run-bot
   ``Runs bot with given parameters.
@@ -175,6 +187,10 @@
                                 (= text command-help))
                             (do
                               (:send-message bot chat-id (help-message)))
+
+                            (= text command-privacy)
+                            (do
+                              (:send-message bot chat-id (privacy-message)))
 
                             # else
                             (do
