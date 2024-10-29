@@ -66,7 +66,7 @@ Restart=always
 RestartSec=5
 DynamicUser=yes
 ReadOnlyPaths=/
-MemoryLimit=100M
+MemoryMax=100M
 NoExecPaths=/bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin
 
 [Install]
