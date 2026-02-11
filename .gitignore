@@ -1,2 +1,4 @@
+# .gitignore
+jpm_tree/
 build/*
 config.json

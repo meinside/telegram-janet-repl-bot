@@ -12,9 +12,9 @@ Build,
 
 ```bash
 $ git clone https://github.com/meinside/telegram-janet-repl-bot.git
-$ cd telegram-janet-repl-bot
-$ jpm deps
-$ jpm build
+$ cd telegram-janet-repl-bot/
+$ jpm -l deps
+$ jpm -l build
 ```
 
 then create a config file:
